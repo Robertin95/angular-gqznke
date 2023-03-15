@@ -23,8 +23,8 @@ export class App {
   name = 'Angular';
 
   public images = [];
-  public anchoContenedor = 800;
-  public altoContenedor = 70;
+  public anchoContenedor = 1000;
+  public altoContenedor = 200;
 
   async ngOnInit() {
     const imagesFromInternet = await this.getImages();
