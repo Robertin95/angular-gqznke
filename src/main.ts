@@ -44,63 +44,60 @@ export class App {
     return images;
   }
 
-  private costo(aspectos, inicio, fin, widthContenedor, alturaMaxima) {
-    const sumaAspectos = aspectos
-      .slice(inicio, fin + 1)
-      .reduce((a, b) => a + b);
-    const alturaFila = widthContenedor / sumaAspectos;
-    const costo = (alturaMaxima - alturaFila) ** 2;
-    return costo;
+  private cost(aspects, start, end, widthContainer, maxHeight) {
+    const sumAspects = aspects.slice(start, end + 1).reduce((a, b) => a + b);
+    const alturarow = widthContainer / sumAspects;
+    const cost = (maxHeight - alturarow) ** 2;
+    return cost;
   }
 
-  private justifiedLayout(imagenes, widthContenedor, alturaMaxima) {
-    const n = imagenes.length;
-    const aspectos = imagenes.map((imagen) => imagen.width / imagen.height);
-    const costoMinimo = new Array(n + 1).fill(0);
-    const ultimaImagenFila = new Array(n).fill(0);
+  private justifiedLayout(images, widthContainer, maxHeight) {
+    const n = images.length;
+    const aspects = images.map((image) => image.width / image.height);
+    const minCost = new Array(n + 1).fill(0);
+    const lastRowImage = new Array(n).fill(0);
 
     for (let i = 0; i < n; i++) {
-      let costo = Infinity;
+      let cost = Infinity;
       let j = i;
 
       while (j < n) {
-        const nuevoCosto =
-          costoMinimo[i] +
-          this.costo(aspectos, i, j, widthContenedor, alturaMaxima);
+        const newCost =
+          minCost[i] + this.cost(aspects, i, j, widthContainer, maxHeight);
 
-        if (nuevoCosto < costo) {
-          costo = nuevoCosto;
-          ultimaImagenFila[i] = j;
+        if (newCost < cost) {
+          cost = newCost;
+          lastRowImage[i] = j;
         }
 
         j++;
       }
-      costoMinimo[i + 1] = costo;
+      minCost[i + 1] = cost;
     }
 
-    const filas = [];
-    let inicio = 0;
+    const rows = [];
+    let start = 0;
 
-    while (inicio < n) {
-      const fin = ultimaImagenFila[inicio];
-      filas.push(imagenes.slice(inicio, fin + 1));
-      inicio = fin + 1;
+    while (start < n) {
+      const end = lastRowImage[start];
+      rows.push(images.slice(start, end + 1));
+      start = end + 1;
     }
 
-    // Ajustar el tamaño de las imágenes en cada fila
-    for (const fila of filas) {
-      const sumaAspectos = fila
-        .map((imagen) => imagen.width / imagen.height)
+    // Ajustar el tamaño de las imágenes en cada row
+    for (const row of rows) {
+      const sumAspects = row
+        .map((image) => image.width / image.height)
         .reduce((a, b) => a + b);
-      const alturaFila = widthContenedor / sumaAspectos;
+      const alturarow = widthContainer / sumAspects;
 
-      for (const imagen of fila) {
-        imagen.height = alturaFila;
-        imagen.width = imagen.height * (imagen.width / imagen.height);
+      for (const image of row) {
+        image.height = alturarow;
+        image.width = image.height * (image.width / image.height);
       }
     }
 
-    return filas;
+    return rows;
   }
 }
 
